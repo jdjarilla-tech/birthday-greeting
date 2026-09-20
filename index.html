@@ -1,1 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy 20th Birthday!</title>
+  <!-- Canvas Confetti Library for Modal -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --bg-cream: #fbf7f4;
+      --primary-pink: #e91e63;
+      --soft-pink: #f48fb1;
+      --text-dark: #3a2e39;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* SECTION 1: BOW & ARROW INTRO */
+    #intro-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #f7ebe1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    .subtitle-text {
+      font-size: 1.1rem;
+      color: #8c717a;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+      font-style: italic;
+    }
+
+    .heart-target {
+      font-size: 100px;
+      position: relative;
+      cursor: pointer;
+      filter: drop-shadow(0 0 25px rgba(233, 30, 99, 0.4));
+      animation: float 2.5s infinite alternate ease-in-out;
+      margin-bottom: 60px;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-15px); }
+    }
+
+    .bow-container {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bow-icon {
+      font-size: 50px;
+      transition: transform 0.2s ease;
+    }
+
+    .pull-text {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: #a0808a;
+      font-weight: bold;
+    }
+
+    /* SECTION 2: MAIN SITE CONTENT */
+    #main-content {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1s ease 0.5s;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* Header Banner */
+    .header-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .header-text {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .header-text .wish-tag {
+      color: #8c717a;
+      font-style: italic;
+      font-size: 1.1rem;
+    }
+
+    .header-text h1 {
+      font-size: 3.2rem;
+      color: var(--primary-pink);
+      line-height: 1.1;
+      margin: 10px 0;
+    }
+
+    .header-text p {
+      color: #725e68;
+      font-size: 0.95rem;
+    }
+
+    /* Heart Tree Illustration */
+    .tree-container {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .heart-tree {
+      width: 280px;
+      height: 320px;
+    }
+
+    /* Photo Grid Section */
+    .section-title {
+      text-align: center;
+      font-size: 1.5rem;
+      color: var(--primary-pink);
+      margin: 50px 0 25px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+
+    .photo-card {
+      width: 100%;
+      height: 160px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      background: #e0e0e0;
+      transition: transform 0.3s ease;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-5px) scale(1.03);
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Message Card */
+    .message-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      margin-bottom: 40px;
+    }
+
+    .message-card h2 {
+      color: var(--primary-pink);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    .message-card p {
+      color: #5a4a54;
+      line-height: 1.8;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    /* Gift Button */
+    .action-btn {
+      display: block;
+      margin: 0 auto;
+      background: var(--primary-pink);
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(233, 30, 99, 0.3);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: #d81b60;
+      transform: scale(1.05);
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 24px;
+      padding: 35px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+    }
+
+    .modal-box h3 {
+      font-size: 1.4rem;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .modal-box p {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .close-btn {
+      background: #f0f0f0;
+      color: #333;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO SCREEN -->
+  <div id="intro-screen">
+    <div class="subtitle-text">a little something, for you</div>
+    <div class="heart-target" id="heartTarget">💖</div>
+    <div class="bow-container" onclick="shootArrow()">
+      <div class="bow-icon" id="bowIcon">🏹</div>
+      <div class="pull-text">PULL & RELEASE</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT PAGE -->
+  <div id="main-content">
+    
+    <!-- Top Header & Heart Tree -->
+    <div class="header-section">
+      <div class="header-text">
+        <span class="wish-tag">and... make a wish</span>
+        <h1>Happy 20th<br>Birthday! 🥳</h1>
+        <p>here's to a brand new decade ahead.</p>
+      </div>
+      <div class="tree-container">
+        <!-- SVG Heart Tree -->
+        <svg class="heart-tree" viewBox="0 0 200 240">
+          <path d="M100,220 Q95,160 100,120 Q80,90 60,80 M100,120 Q120,90 140,75 M100,140 Q75,120 50,130" stroke="#7a5242" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <g fill="#e91e63">
+            <path d="M100,40 Q100,25 85,25 Q70,25 70,40 Q70,60 100,80 Q130,60 130,40 Q130,25 115,25 Q100,25 100,40 Z"/>
+            <path d="M60,60 Q60,48 48,48 Q36,48 36,60 Q36,75 60,90 Q84,75 84,60 Q84,48 72,48 Q60,48 60,60 Z" transform="scale(0.8) translate(20,20)"/>
+            <path d="M140,60 Q140,48 128,48 Q116,48 116,60 Q116,75 140,90 Q164,75 164,60 Q164,48 152,48 Q140,48 140,60 Z" transform="scale(0.8) translate(-10,20)"/>
+            <path d="M100,80 Q100,68 88,68 Q76,68 76,80 Q76,95 100,110 Q124,95 124,80 Q124,68 112,68 Q100,68 100,80 Z" transform="scale(0.7) translate(40,40)"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Photo Grid -->
+    <h3 class="section-title">Beautiful Memories</h3>
+    <div class="photo-grid">
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400" alt="Memory 1"></div>
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400" alt="Memory 2"></div>
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400" alt="Memory 3"></div>
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400" alt="Memory 4"></div>
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400" alt="Memory 5"></div>
+      <div class="photo-card"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400" alt="Memory 6"></div>
+    </div>
+
+    <!-- Message Card -->
+    <div class="message-card">
+      <h2>A Message For You</h2>
+      <p>I hope you take time today to realize how special you are.</p>
+      <p>Our connection means a lot to me—from the late-night overthinking to the deep, honest conversations where we just lay everything out on the table.</p>
+      <p>You’ve shown me a level of transparency and effort that I truly value, and I don't take our bond for granted.</p>
+      <p>Wishing you good health, genuine happiness, and an amazing decade ahead. Ingatan mo sarili mo palagi, and make the absolute most of your 20th! 🎈</p>
+    </div>
+
+    <!-- Trigger Gift Modal Button -->
+    <button class="action-btn" onclick="openGiftModal()">🎁 Claim Wish</button>
+
+  </div>
+
+  <!-- GIFT MODAL -->
+  <div class="modal-overlay" id="giftModal">
+    <div class="modal-box">
+      <div class="modal-icon">🎂</div>
+      <h3>Happy 20th Birthday!</h3>
+      <p>May your 20s be filled with growth, happiness, peace, and unforgettable moments!</p>
+      <button class="close-btn" onclick="closeGiftModal()">Close ✨</button>
+    </div>
+  </div>
+
+  <script>
+    // Shoot Arrow Transition
+    function shootArrow() {
+      const bow = document.getElementById('bowIcon');
+      const heart = document.getElementById('heartTarget');
+      
+      // Animate bow shoot
+      bow.style.transform = 'translateY(-40px) scale(0.9)';
+      
+      setTimeout(() => {
+        heart.style.transform = 'scale(1.4)';
+        heart.style.filter = 'drop-shadow(0 0 40px #ff0055)';
+        
+        // Hide intro screen
+        const intro = document.getElementById('intro-screen');
+        intro.style.opacity = '0';
+        
+        setTimeout(() => {
+          intro.style.visibility = 'hidden';
+          const mainContent = document.getElementById('main-content');
+          mainContent.style.visibility = 'visible';
+          mainContent.style.opacity = '1';
+        }, 800);
+      }, 200);
+    }
+
+    // Modal Controls
+    function openGiftModal() {
+      document.getElementById('giftModal').classList.add('active');
+      
+      // Trigger Confetti
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function closeGiftModal() {
+      document.getElementById('giftModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
